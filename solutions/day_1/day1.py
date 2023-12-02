@@ -64,7 +64,7 @@ def get_calibration_value(document_string):
 
 number_trie = reduce(lambda trie, word: trie.insert(word), spelling_to_number.keys(), Trie())
 
-with open(os.path.join(os.path.dirname(__file__), "day1.txt")) as my_file:        
+with open(os.path.join(os.path.dirname(__file__), "input.txt")) as my_file:        
     total = 0
     for line in my_file:
         total += get_calibration_value(line)
