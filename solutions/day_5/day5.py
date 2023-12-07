@@ -1,7 +1,5 @@
 import os 
 
-from ast import Tuple
-from typing import List
 from functools import reduce
 
 def source_to_destination(source_start, destination_start, input):
