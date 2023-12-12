@@ -51,38 +51,25 @@ def loop_steps(grid, row, col, direction):
     
     return []
 
-def mark_connected_unenclosed(grid, forbidden_coordinates, start_row, start_col):
-    stack = [(start_row, start_col)]
-
-    while stack:
-        row, col = stack.pop()
-
-        if not in_bounds(grid, row, col) or (row, col) in forbidden_coordinates or grid[row][col] == "X": continue
-
-        grid[row][col] = "X"
-
-        stack.extend([(row + 1, col), (row - 1, col), (row, col + 1), (row, col - 1)])
-
-def mark_all_unenclosed(grid, forbidden_coordinates):
+def count_enclosed(grid, loop_coordinates):
     num_rows, num_cols = len(grid), len(grid[0])
 
+    total_enclosed_count = 0
+
+    # parity counting from reddit, using https://en.wikipedia.org/wiki/Even%E2%80%93odd_rule
     for row in range(num_rows):
-        mark_connected_unenclosed(grid, forbidden_coordinates, row, 0)
-        mark_connected_unenclosed(grid, forbidden_coordinates, row, num_cols - 1)
-
-    for col in range(num_cols):
-        mark_connected_unenclosed(grid, forbidden_coordinates, 0, col)
-        mark_connected_unenclosed(grid, forbidden_coordinates, num_rows - 1, col)
-
-def count_dots(grid):
-    num_rows, num_cols = len(grid), len(grid[0])
-
-    count = 0
-    for row in range(num_rows):
+        enclosed_count, wall_count = 0, 0
         for col in range(num_cols):
-            if grid[row][col] == ".": count += 1
+            if (row, col) in loop_coordinates and grid[row][col] in {"|", "L", "J"}:
+                wall_count += 1
+                if wall_count % 2 == 0: 
+                    total_enclosed_count += enclosed_count 
+
+                enclosed_count = 0
+            elif (row, col) not in loop_coordinates:
+                enclosed_count += 1 
     
-    return count
+    return total_enclosed_count
 
 def part1(grid):
     start_row, start_col = find_start(grid)
@@ -100,11 +87,10 @@ def part2(grid):
     loop_coordinates = next(loop for loop in loop_coordinates_list if loop)
     loop_coordinates.append((start_row, start_col))
 
-    mark_all_unenclosed(grid, loop_coordinates)
+    # for row, elements in enumerate(grid):
+    #     print("".join(["|" if (row, col) in loop_coordinates else elem for col, elem in enumerate(elements)]))
 
-    for row in grid:
-        print("".join(row))
-    
+    return count_enclosed(grid, loop_coordinates)
 
 if __name__ == "__main__":
     with open(os.path.join(os.path.dirname(__file__), "input.txt")) as my_file:
