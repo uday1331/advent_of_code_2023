@@ -15,10 +15,6 @@ def is_spring_at(spring_row, start_index, match_length):
     
     return True
 
-# 1. if spring_row[index] == "#": have to match current length
-# 2. if spring_row[index] == "?": can be a match or can not be
-# 3. if not 1, then check for match starting index + 1
-
 memoise = {}
 
 def find_ways(spring_row, index, spring_length_list):
@@ -43,6 +39,19 @@ def find_ways(spring_row, index, spring_length_list):
     memoise[key] = total
     return memoise[key]
 
+def sum_of_ways(spring_row_list, spring_length_lists, multiple):
+    total = 0
+    for spring_row, spring_length_list in zip(spring_row_list, spring_length_lists):
+
+        spring_length_list = (spring_length_list * multiple)
+        spring_length_list.reverse()
+
+        spring_row = "?".join([spring_row for _ in range(multiple)])
+
+        total += find_ways(spring_row, 0, spring_length_list)
+    
+    return total
+
 if __name__ == "__main__":
     with open(os.path.join(os.path.dirname(__file__), "input.txt")) as my_file:
         records = [line.rstrip().split(" ") for line in my_file]
@@ -50,18 +59,5 @@ if __name__ == "__main__":
         spring_row_list = [sprint_row for sprint_row, _ in records]
         spring_length_lists = [[int(length) for length in sprint_length_list.split(",")] for _, sprint_length_list in records]
 
-        total = 0
-        for spring_row, spring_length_list in zip(spring_row_list, spring_length_lists):
-            multiple = 5
-
-            spring_length_list = (spring_length_list * multiple)
-            spring_length_list.reverse()
-
-            spring_row = "?".join([spring_row for _ in range(multiple)])
-
-            total += find_ways(spring_row, 0, spring_length_list)
-        
-        print(total)
-
-# ?#?#?#?#?#?#?#? 1,3,1,6
-# #?#?#?#?#?#?#? and 3,1,6 | 
+        print("Part1:", sum_of_ways(spring_row_list, spring_length_lists, 1))
+        print("Part1:", sum_of_ways(spring_row_list, spring_length_lists, 5))
