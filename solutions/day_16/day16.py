@@ -70,6 +70,9 @@ def part2(grid):
     right = max(len(light_grid(grid, (row, num_cols - 1), LEFT)) for row in range(num_rows))
 
     return max(top, bottom, left, right)
+
+# using a match of complex number representation and match statements can really help simplify this
+# eg: https://github.com/fuglede/adventofcode/blob/master/2023/day16/solutions.py
     
 if __name__ == "__main__":
     with open(os.path.join(os.path.dirname(__file__), "input.txt")) as my_file:
